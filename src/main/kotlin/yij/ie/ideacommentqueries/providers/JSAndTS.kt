@@ -55,14 +55,18 @@ class JSAndTS: InlayHintsProvider<NoSettings> {
     ): InlayHintsCollector {
         return object : FactoryInlayHintsCollector(editor) {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
+                // remove old hints
                 val text = element.text
-                val allReuslt = twoSlashRelative.findAll(text)
-                logger<JSAndTS>().info("all result len: ${allReuslt.count()}")
                 for (match in twoSlashRelative.findAll(text)) {
                     val (all, offset, lineOffset, direction, charOffset) = match.destructured
-                    val matchOffset = element.startOffset + match.range.first + offset.length
+                    val matchOffset = element.startOffset + match.range.last - (
+                        lineOffset.length - direction.length - charOffset.length - (1 /* ? length */)
+                    )
                     val pointPosition = editor.offsetToLogicalPosition(matchOffset)
-                    logger<JSAndTS>().info("all: $all, offset: $offset, lineOffset: $lineOffset, direction: $direction, charOffset: $charOffset")
+//                    logger<JSAndTS>().info(
+//                        "match: $match, all: $all," +
+//                        "offset: $offset, lineOffset: $lineOffset, direction: $direction, charOffset: $charOffset"
+//                    )
                     val offsetInt = when (offset) {
                         "^" -> -1
                         "_" -> +1
@@ -78,6 +82,7 @@ class JSAndTS: InlayHintsProvider<NoSettings> {
                         "<" -> -1
                         else -> 0
                     }
+//                    logger<JSAndTS>().info("line: ${pointPosition.line}, column: ${pointPosition.column}")
                     val targetLine = lineOffsetInt * offsetInt    + pointPosition.line
                     val targetChar = charOffsetInt * directionInt + pointPosition.column
                     // get hover text
