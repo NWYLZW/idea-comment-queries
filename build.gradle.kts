@@ -24,6 +24,9 @@ intellij {
 }
 
 tasks {
+    buildSearchableOptions {
+        enabled = false
+    }
     // Set the JVM compatibility versions
     withType<JavaCompile> {
         sourceCompatibility = "11"
