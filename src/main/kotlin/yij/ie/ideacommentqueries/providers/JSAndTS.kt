@@ -58,11 +58,10 @@ class JSAndTS: InlayHintsProvider<NoSettings> {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
                 val text = element.text
                 val allReuslt = twoSlashRelative.findAll(text)
-                // log all result len
                 logger<JSAndTS>().info("all result len: ${allReuslt.count()}")
                 for (matchResult in twoSlashRelative.findAll(text)) {
-                    logger<JSAndTS>().info(matchResult.toString())
                     val (offset, lineOffset, direction, charOffset) = matchResult.destructured
+                    logger<JSAndTS>().info("offset: $offset, lineOffset: $lineOffset, direction: $direction, charOffset: $charOffset")
                     val offsetInt = when (offset) {
                         "^" -> 1
                         "_" -> -1
@@ -77,11 +76,13 @@ class JSAndTS: InlayHintsProvider<NoSettings> {
                         "<" -> -1
                         else -> 0
                     }
+                    val targetLine = lineOffsetInt + offsetInt
+                    val targetChar = charOffsetInt + directionInt
                     insertHint(
                         "line",
                         sink,
-                        element.endOffset,
-                        "targetLine: ${lineOffsetInt + offsetInt} char: ${charOffsetInt + directionInt}"
+                        element.startOffset + matchResult.range.last + 1,
+                        "targetLine: $targetLine char: $targetChar"
                     )
                 }
                 return false
@@ -90,7 +91,7 @@ class JSAndTS: InlayHintsProvider<NoSettings> {
                 sink.addInlineElement(offset, true, factory.run {
                     container(
                         text(text),
-                        padding = InlayPresentationFactory.Padding(2, 2, 2, 2),
+                        padding = InlayPresentationFactory.Padding(5, 5, 5, 2),
                     )
                 }, false)
             }
