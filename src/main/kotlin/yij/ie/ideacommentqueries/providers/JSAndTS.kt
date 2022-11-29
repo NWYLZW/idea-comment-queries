@@ -20,9 +20,8 @@ import javax.swing.JComponent
  */
 const val relativeRule = "(\\^|_)?(\\d*)(<|>)?(\\d*)?"
 
-val defineRelativeMatcherRegExp = fun (prefix: String, rule: String) = Regex(
-    "(?<!${prefix}\\s{0,10000})${prefix}\\s*(${rule})\\?$"
-)
+val defineRelativeMatcherRegExp = fun (prefix: String, rule: String) =
+    "(?<!${prefix}\\s{0,10000})${prefix}\\s*(${rule})\\?".toRegex()
 
 val twoSlashRelative = defineRelativeMatcherRegExp("//", relativeRule)
 
@@ -58,13 +57,12 @@ class JSAndTS: InlayHintsProvider<NoSettings> {
         return object : FactoryInlayHintsCollector(editor) {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
                 val text = element.text
-                logger<JSAndTS>().info(text)
-                if (element.startOffset != element.endOffset) {
-                    return true
-                }
-                val matchResult = twoSlashRelative.find(text)
-                if (matchResult != null) {
-                    val (offset, lineOffset, direction, charOffset) = twoSlashRelative.find(text)?.destructured ?: return true
+                val allReuslt = twoSlashRelative.findAll(text)
+                // log all result len
+                logger<JSAndTS>().info("all result len: ${allReuslt.count()}")
+                for (matchResult in twoSlashRelative.findAll(text)) {
+                    logger<JSAndTS>().info(matchResult.toString())
+                    val (offset, lineOffset, direction, charOffset) = matchResult.destructured
                     val offsetInt = when (offset) {
                         "^" -> 1
                         "_" -> -1
@@ -85,10 +83,6 @@ class JSAndTS: InlayHintsProvider<NoSettings> {
                         element.endOffset,
                         "targetLine: ${lineOffsetInt + offsetInt} char: ${charOffsetInt + directionInt}"
                     )
-                }
-                if (element.startOffset != editor.document.getLineStartOffset(editor.document.getLineNumber(element.startOffset))) {
-                    val (offset, lineOffset, direction, charOffset) = twoSlashRelative.find(text)?.destructured ?: return true
-                    logger<JSAndTS>().info("offset: $offset, lineOffset: $lineOffset, direction: $direction, charOffset: $charOffset")
                 }
                 return false
             }
