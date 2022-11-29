@@ -5,7 +5,6 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.refactoring.suggested.endOffset
 import com.intellij.refactoring.suggested.startOffset
 import javax.swing.JComponent
 
@@ -59,14 +58,17 @@ class JSAndTS: InlayHintsProvider<NoSettings> {
                 val text = element.text
                 val allReuslt = twoSlashRelative.findAll(text)
                 logger<JSAndTS>().info("all result len: ${allReuslt.count()}")
-                for (matchResult in twoSlashRelative.findAll(text)) {
-                    val (offset, lineOffset, direction, charOffset) = matchResult.destructured
-                    logger<JSAndTS>().info("offset: $offset, lineOffset: $lineOffset, direction: $direction, charOffset: $charOffset")
+                for (match in twoSlashRelative.findAll(text)) {
+                    val (all, offset, lineOffset, direction, charOffset) = match.destructured
+                    val matchOffset = element.startOffset + match.range.first + offset.length
+                    val pointPosition = editor.offsetToLogicalPosition(matchOffset)
+                    logger<JSAndTS>().info("all: $all, offset: $offset, lineOffset: $lineOffset, direction: $direction, charOffset: $charOffset")
                     val offsetInt = when (offset) {
-                        "^" -> 1
-                        "_" -> -1
-                        "v" -> -1
-                        "V" -> -1
+                        "^" -> -1
+                        "_" -> +1
+                        "⌄" -> +1
+                        "v" -> +1
+                        "V" -> +1
                         else -> 0
                     }
                     val lineOffsetInt = lineOffset.toIntOrNull() ?: 0
@@ -76,12 +78,13 @@ class JSAndTS: InlayHintsProvider<NoSettings> {
                         "<" -> -1
                         else -> 0
                     }
-                    val targetLine = lineOffsetInt + offsetInt
-                    val targetChar = charOffsetInt + directionInt
+                    val targetLine = lineOffsetInt * offsetInt    + pointPosition.line
+                    val targetChar = charOffsetInt * directionInt + pointPosition.column
+                    // get hover text
                     insertHint(
                         "line",
                         sink,
-                        element.startOffset + matchResult.range.last + 1,
+                        element.startOffset + match.range.last + 1,
                         "targetLine: $targetLine char: $targetChar"
                     )
                 }
