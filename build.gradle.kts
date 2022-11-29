@@ -11,7 +11,8 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    testImplementation(kotlin("test"))
+    implementation(kotlin("test"))
+    implementation(kotlin("test-junit"))
 }
 
 // Configure Gradle IntelliJ Plugin

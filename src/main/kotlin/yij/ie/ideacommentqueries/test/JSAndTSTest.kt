@@ -1,6 +1,7 @@
-package yij.ie.ideacommentqueries.providers
+package yij.ie.ideacommentqueries.test
 
 import org.junit.Test
+import yij.ie.ideacommentqueries.providers.twoSlashRelative
 import kotlin.test.DefaultAsserter.assertEquals
 
 internal class JSAndTSTest {
