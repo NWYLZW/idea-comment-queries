@@ -16,12 +16,14 @@
     <description><![CDATA[
         To queries your type by comment.
         you can use it like this:
-        <pre style="background-color: #f5f5f5; padding: 5px; border: 1px solid #ccc; border-radius: 3px;">type T0 = {
+<pre style="background-color: #f5f5f5; padding: 5px; border: 1px solid #ccc; border-radius: 3px;">
+type T0 = {
     a: string;
     b: number;
 };
 type T1 = T0;
-//   ^?</pre>
+//   ^?
+</pre>
 
         <p>then you will get the type of T0</p>
 
