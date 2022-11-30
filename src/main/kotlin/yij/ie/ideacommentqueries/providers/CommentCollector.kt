@@ -104,10 +104,8 @@ open class CommentCollector(
             val (regExp, matchFunc) = matcher
 
             for (match in regExp.findAll(text)) {
-                val endOffset = element.startOffset + match.range.last + 1
-                val endPosition = editor.offsetToLogicalPosition(
-                    element.startOffset + match.range.last + 1
-                )
+                val endOffset = element.startOffset + match.range.last
+                val endPosition = editor.offsetToLogicalPosition(endOffset)
                 val (positions, file) = matchFunc(
                     endPosition.line to endPosition.column,
                     match.destructured
