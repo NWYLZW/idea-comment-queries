@@ -16,6 +16,8 @@ internal class CommentCollectorKtTest {
             //   ^2?
             // ignore next line
             // // ^?
+            // ignore next line
+            // ^?wqedfwqeqw
         """.trimIndent()
         val cases = arrayListOf(
             +1 to +0,

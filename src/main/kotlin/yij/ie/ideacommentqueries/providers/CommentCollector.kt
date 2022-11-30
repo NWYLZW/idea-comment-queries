@@ -27,7 +27,7 @@ typealias Matcher = Pair<Regex, MatcherFunc>
 const val relativeRule = "(\\^|_)?(\\d*)(<|>)?(\\d*)?"
 
 val defineRelativeMatcherRegExp = fun (prefix: String) =
-    "(?<!${prefix}\\s{0,10000})${prefix}\\s*(${relativeRule})\\?".toRegex()
+    "(?<!${prefix}\\s{0,10000})${prefix}\\s*(${relativeRule})\\?\\n".toRegex()
 
 fun resolveRelativeMatchResult(matchResult: MatchResult.Destructured): Pair<Int, Int> {
     val (all, offset, lineOffset, direction, charOffset) = matchResult
