@@ -14,7 +14,19 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-        to queries your type by comment, it is powerful extension.
+        To queries your type by comment.
+        you can use it like this:
+        <pre>
+        type T0 = {
+            a: string;
+            b: number;
+        };
+        type T1 = T0;
+        //   ^?
+        </pre>
+        <p>then you will get the type of T0</p>
+
+        <a href="https://github.com/nwylzw/idea-comment-queries/README.md">Get more.</a>
     ]]></description>
 
     <!-- Product and plugin compatibility requirements.
