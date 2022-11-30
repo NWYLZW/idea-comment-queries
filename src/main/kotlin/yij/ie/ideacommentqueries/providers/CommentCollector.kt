@@ -101,13 +101,14 @@ open class CommentCollector(
         val text = element.text
         for (matcher in matchers) {
             if (matcher == null) continue
+            val (regExp, matchFunc) = matcher
 
-            for (match in twoSlashRelative.findAll(text)) {
+            for (match in regExp.findAll(text)) {
                 val endOffset = element.startOffset + match.range.last + 1
                 val endPosition = editor.offsetToLogicalPosition(
                     element.startOffset + match.range.last + 1
                 )
-                val (positions, file) = matcher.second(
+                val (positions, file) = matchFunc(
                     endPosition.line to endPosition.column,
                     match.destructured
                 )

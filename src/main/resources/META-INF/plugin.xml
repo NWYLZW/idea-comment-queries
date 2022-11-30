@@ -27,11 +27,8 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <codeInsight.inlayProvider language="JavaScript"
-                                   implementationClass="yij.ie.ideacommentqueries.providers.JSAndTS"
-                                   id="JavaScriptCommentQueriesInlayProvider"/>
         <codeInsight.inlayProvider language="TypeScript"
-                                   implementationClass="yij.ie.ideacommentqueries.providers.JSAndTS"
+                                   implementationClass="yij.ie.ideacommentqueries.providers.TS"
                                    id="TypeScriptCommentQueriesInlayProvider"/>
     </extensions>
 </idea-plugin>
