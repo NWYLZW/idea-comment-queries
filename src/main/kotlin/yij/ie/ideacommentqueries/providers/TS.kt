@@ -2,9 +2,11 @@ package yij.ie.ideacommentqueries.providers
 
 import com.intellij.codeInsight.hints.*
 import com.intellij.lang.typescript.compiler.TypeScriptService
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import java.util.concurrent.TimeUnit
 import javax.swing.JComponent
 
 @Suppress("UnstableApiUsage")
@@ -58,7 +60,12 @@ class TS: InlayHintsProvider<TS.Setting> {
                     ele.originalElement,
                     file.originalFile.virtualFile
                 )
-                return quickInfo?.get()
+                try {
+                    return quickInfo?.get(1, TimeUnit.SECONDS)
+                } catch (e: Exception) {
+                    logger<TS>().warn("getQuickInfoAt failed", e)
+                    return null
+                }
             }
         ) {}
     }
