@@ -7,8 +7,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import javax.swing.JComponent
 
-val twoSlashRelative = defineRelativeMatcherRegExp("//")
-
 @Suppress("UnstableApiUsage")
 class TS: InlayHintsProvider<TS.Setting> {
     override val key: SettingsKey<Setting>
