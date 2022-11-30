@@ -1,11 +1,13 @@
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.7.10"
-    id("org.jetbrains.intellij") version "1.8.0"
+    id("org.jetbrains.kotlin.jvm") version "1.7.20"
+    id("org.jetbrains.intellij") version "1.10.0"
 }
 
+val javaVersion = "17"
+
 group = "yij.ie"
-version = "1.0.0"
+version = "2.0.0"
 
 repositories {
     mavenCentral()
@@ -18,7 +20,7 @@ dependencies {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2021.3.3")
+    version.set("2022.2.3")
     // https://jetbrains.org/intellij/sdk/docs/products/webstorm.html
     type.set("IU")
 
@@ -36,15 +38,15 @@ tasks {
     }
     // Set the JVM compatibility versions
     withType<JavaCompile> {
-        sourceCompatibility = "11"
-        targetCompatibility = "11"
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
     }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = javaVersion
     }
 
     patchPluginXml {
-        sinceBuild.set("213")
+        sinceBuild.set("222.4345.14")
         untilBuild.set("223.*")
     }
 
