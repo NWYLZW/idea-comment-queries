@@ -25,8 +25,8 @@ val defineRelativeMatcherRegExp = fun (prefix: String, rule: String) =
 val twoSlashRelative = defineRelativeMatcherRegExp("//", relativeRule)
 
 @Suppress("UnstableApiUsage")
-class JSAndTS: InlayHintsProvider<NoSettings> {
-    override val key: SettingsKey<NoSettings>
+class JSAndTS: InlayHintsProvider<JSAndTS.Setting> {
+    override val key: SettingsKey<Setting>
         get() = SettingsKey("yij.ie.ideacommentqueries.jsandts")
     override val name: String
         get() = "JS and TS"
@@ -35,10 +35,12 @@ class JSAndTS: InlayHintsProvider<NoSettings> {
             No Content
         """.trimIndent()
 
-    override fun createSettings(): NoSettings {
-        return NoSettings()
+    data class Setting(internal val enable: Boolean)
+
+    override fun createSettings(): Setting {
+        return Setting(true)
     }
-    override fun createConfigurable(settings: NoSettings): ImmediateConfigurable {
+    override fun createConfigurable(settings: Setting): ImmediateConfigurable {
         return object : ImmediateConfigurable {
             override fun createComponent(listener: ChangeListener): JComponent {
                 return object : JComponent() {
@@ -50,12 +52,31 @@ class JSAndTS: InlayHintsProvider<NoSettings> {
     override fun getCollectorFor(
         file: PsiFile,
         editor: Editor,
-        settings: NoSettings,
+        settings: Setting,
         sink: InlayHintsSink
     ): InlayHintsCollector {
+        if (!settings.enable) return object : InlayHintsCollector {
+            override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
+                return false
+            }
+        }
+        logger<JSAndTS>().info("getCollectorFor")
+        fun insertHint(
+            type: String,
+            offset: Int,
+            text: String,
+            factory: HintsInlayPresentationFactory
+        ) {
+            logger<JSAndTS>().info("insertHint $type $offset $text")
+            sink.addInlineElement(
+                offset,
+                false,
+                factory.simpleText(text),
+                false
+            )
+        }
         return object : FactoryInlayHintsCollector(editor) {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
-                // remove old hints
                 val text = element.text
                 for (match in twoSlashRelative.findAll(text)) {
                     val (all, offset, lineOffset, direction, charOffset) = match.destructured
@@ -88,20 +109,12 @@ class JSAndTS: InlayHintsProvider<NoSettings> {
                     // get hover text
                     insertHint(
                         "line",
-                        sink,
                         element.startOffset + match.range.last + 1,
-                        "targetLine: $targetLine char: $targetChar"
+                        "targetLine: $targetLine char: $targetChar",
+                        object : HintsInlayPresentationFactory(factory) {}
                     )
                 }
                 return false
-            }
-            fun insertHint(type: String, sink: InlayHintsSink, offset: Int, text: String) {
-                sink.addInlineElement(offset, true, factory.run {
-                    container(
-                        text(text),
-                        padding = InlayPresentationFactory.Padding(5, 5, 5, 2),
-                    )
-                }, false)
             }
         }
     }
