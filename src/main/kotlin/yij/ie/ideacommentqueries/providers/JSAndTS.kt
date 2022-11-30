@@ -1,6 +1,7 @@
 package yij.ie.ideacommentqueries.providers
 
 import com.intellij.codeInsight.hints.*
+import com.intellij.codeInsight.hints.presentation.PresentationFactory
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
@@ -64,12 +65,13 @@ class JSAndTS: InlayHintsProvider<JSAndTS.Setting> {
             type: String,
             offset: Int,
             text: String,
-            factory: HintsInlayPresentationFactory
+            factory: PresentationFactory
         ) {
             sink.addInlineElement(
                 offset,
                 false,
-                factory.simpleText(
+                HintsInlayUtil.tag(
+                    factory,
                     text
                         .replace("\n *".toRegex(), "␊")
                         .replace("[\u0000-\u001F\u007F-\u009F]".toRegex(), "")
@@ -132,7 +134,7 @@ class JSAndTS: InlayHintsProvider<JSAndTS.Setting> {
                             "inlay",
                             element.startOffset + match.range.last + 1,
                             it,
-                            object : HintsInlayPresentationFactory(factory) {}
+                            factory
                         )
                     }
                 }
