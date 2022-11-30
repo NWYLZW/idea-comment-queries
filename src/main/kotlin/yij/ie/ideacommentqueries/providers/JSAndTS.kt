@@ -48,10 +48,22 @@ class JSAndTS: InlayHintsProvider<JSAndTS.Setting> {
             }
         }
         return object : CommentCollector(
-            arrayOf(
+            editor, arrayOf(
                 matchers["twoSlashRelative"]
             ),
-            file, editor
+            fun (line: Int, char: Int, filePath: String?): String? {
+                val lineStartOffset = editor.document.getLineStartOffset(line) - 2
+                val offset = lineStartOffset + char
+                val ele = file.findElementAt(offset) ?: return null
+
+                val tss = TypeScriptService.getForFile(file.project, file.virtualFile) ?: return null
+                val quickInfo = tss.getQuickInfoAt(
+                    ele,
+                    ele.originalElement,
+                    file.originalFile.virtualFile
+                )
+                return quickInfo?.get()
+            }
         ) {}
     }
 }

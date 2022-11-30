@@ -69,11 +69,15 @@ val matchers = mapOf(
     "twoSlashRelative" to defineRelativeMatcher("//"),
 )
 
+typealias WhatHints = (line: Int, char: Int, file: String?) -> String?
+
 @Suppress("UnstableApiUsage")
 open class CommentCollector(
-    private val matchers: Array<Matcher?>,
-    private val file: PsiFile,
     private val editor: Editor,
+    private val matchers: Array<Matcher?>,
+    private val whatHints: WhatHints = fun (line: Int, char: Int, file: String?): String {
+        return "line: $line, char: $char, file: $file"
+    }
 ) : FactoryInlayHintsCollector(editor) {
     private fun insertHint(
         sink: InlayHintsSink,
@@ -95,23 +99,6 @@ open class CommentCollector(
         )
     }
 
-    private fun getPsiElementByPosition(line: Int, char: Int): PsiElement? {
-        val lineStartOffset = editor.document.getLineStartOffset(line - 1) - 2
-        val offset = lineStartOffset + char
-        return file.findElementAt(offset)
-    }
-
-    private fun getQuickInfoBy(line: Int, char: Int): String? {
-        val ele = getPsiElementByPosition(line + 1, char) ?: return null
-        val tss = TypeScriptService.getForFile(file.project, file.virtualFile) ?: return null
-        val quickInfo = tss.getQuickInfoAt(
-            ele,
-            ele.originalElement,
-            file.originalFile.virtualFile
-        )
-        return quickInfo?.get()
-    }
-
     override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
         val text = element.text
         for (matcher in matchers) {
@@ -127,7 +114,7 @@ open class CommentCollector(
                     match.destructured
                 )
                 val queryPos= positions.second
-                getQuickInfoBy(queryPos.first, queryPos.second)?.let {
+                whatHints(queryPos.first, queryPos.second, file)?.let {
                     insertHint(
                         sink,
                         "inlay",
