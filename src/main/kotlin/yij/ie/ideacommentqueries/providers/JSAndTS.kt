@@ -1,12 +1,11 @@
 package yij.ie.ideacommentqueries.providers
 
 import com.intellij.codeInsight.hints.*
-import com.intellij.openapi.diagnostic.logger
+import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.suggested.startOffset
-import org.mozilla.javascript.ast.VariableDeclaration
 import javax.swing.JComponent
 
 /**
@@ -67,25 +66,33 @@ class JSAndTS: InlayHintsProvider<JSAndTS.Setting> {
             text: String,
             factory: HintsInlayPresentationFactory
         ) {
-            logger<JSAndTS>().info("insertHint $type $offset \"$text\"")
             sink.addInlineElement(
                 offset,
                 false,
-                factory.simpleText(text),
+                factory.simpleText(
+                    text
+                        .replace("\n *".toRegex(), "␊")
+                        .replace("[\u0000-\u001F\u007F-\u009F]".toRegex(), "")
+                ),
                 false
             )
         }
         fun getPsiElementByPosition(line: Int, char: Int): PsiElement? {
             val lineStartOffset = editor.document.getLineStartOffset(line - 1) - 2
 //            logger<JSAndTS>().info("getPsiElementByOffset $lineStartOffset")
-            val offset = lineStartOffset + char - 1
+            val offset = lineStartOffset + char
 //            logger<JSAndTS>().info("getPsiElementByOffset $line $char $offset")
             return file.findElementAt(offset)
         }
-        fun getVariableTypes(variableDeclaration: VariableDeclaration): List<Pair<Int, String>> {
-            return variableDeclaration.variables.map {
-                it.type to it.shortName()
-            }
+        fun getQuickInfoBy(line: Int, char: Int): String? {
+            val ele = getPsiElementByPosition(line, char) ?: return null
+            val tss = TypeScriptService.getForFile(file.project, file.virtualFile) ?: return null
+            val quickInfo = tss.getQuickInfoAt(
+                ele,
+                ele.originalElement,
+                file.originalFile.virtualFile
+            )
+            return quickInfo?.get()
         }
         return object : FactoryInlayHintsCollector(editor) {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
@@ -119,23 +126,15 @@ class JSAndTS: InlayHintsProvider<JSAndTS.Setting> {
                     val targetLine = lineOffsetInt * offsetInt    + pointPosition.line
                     val targetChar = charOffsetInt * directionInt + pointPosition.column
                     // get hover text
-
-                    val hoverText = when (val targetElement = getPsiElementByPosition(targetLine, targetChar)) {
-                        is VariableDeclaration -> {
-                            getVariableTypes(targetElement).joinToString("\n") { (type, name) ->
-                                "$name: $type"
-                            }
-                        }
-                        else -> {
-                            "No Content"
-                        }
+                    val hoverText = getQuickInfoBy(targetLine, targetChar)
+                    hoverText?.let {
+                        insertHint(
+                            "inlay",
+                            element.startOffset + match.range.last + 1,
+                            it,
+                            object : HintsInlayPresentationFactory(factory) {}
+                        )
                     }
-                    insertHint(
-                        "line",
-                        element.startOffset + match.range.last + 1,
-                        "targetLine: $targetLine char: $targetChar [$hoverText]",
-                        object : HintsInlayPresentationFactory(factory) {}
-                    )
                 }
                 return false
             }
