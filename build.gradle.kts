@@ -7,7 +7,7 @@ plugins {
 val javaVersion = "17"
 
 group = "yij.ie"
-version = "2.0.0"
+version = "2.0.1"
 
 repositories {
     mavenCentral()
