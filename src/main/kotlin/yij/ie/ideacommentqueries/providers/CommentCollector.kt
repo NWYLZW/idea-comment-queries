@@ -3,10 +3,8 @@ package yij.ie.ideacommentqueries.providers
 import com.intellij.codeInsight.hints.FactoryInlayHintsCollector
 import com.intellij.codeInsight.hints.InlayHintsSink
 import com.intellij.codeInsight.hints.presentation.PresentationFactory
-import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.refactoring.suggested.startOffset
 
 typealias Position = Pair<Int, Int>
