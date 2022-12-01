@@ -142,7 +142,23 @@ open class CommentCollector(
         )
     }
 
+    private fun insertHints(
+        sink: InlayHintsSink,
+        fileHintPositions: MutableMap<String, MutableList<Pair<Position, Int>>>
+    ) {
+        fileHintPositions.forEach { (file, positions) ->
+            positions.forEach { (position, endOffset) ->
+                whatHints(position.first, position.second, file)?.let {
+                    insertHint(sink, endOffset, it, factory)
+                }
+            }
+        }
+    }
+
     override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
+        val fileHintPositions = mutableMapOf<
+            String, MutableList<Pair<Position, Int>>
+        >()
         val text = element.text
         var lineOffset = 1
         val lines = text.split("\n")
@@ -157,9 +173,9 @@ open class CommentCollector(
                 match.destructured
             )
             val queryPos= positions.second
-            whatHints(queryPos.first, queryPos.second, file)?.let {
-                insertHint(sink, endOffset, it, factory)
-            }
+            fileHintPositions.getOrPut(file ?: "") {
+                mutableListOf()
+            }.add(queryPos to endOffset)
         }
         lines.forEach { line ->
             matchers.forEach { matcher ->
@@ -167,6 +183,9 @@ open class CommentCollector(
             }
             lineOffset += line.length + 1
         }
+        // sleep 50ms
+        Thread.sleep(50)
+        insertHints(sink, fileHintPositions)
         return false
     }
 }

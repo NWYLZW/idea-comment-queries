@@ -68,8 +68,6 @@ class TS: InlayHintsProvider<TS.Setting> {
                     nFile.originalFile.virtualFile
                 )
                 return try {
-                    // sleep 0.3 second to wait for tss.getQuickInfoAt
-                    TimeUnit.MILLISECONDS.sleep(300)
                     quickInfo?.get(1, TimeUnit.SECONDS)
                 } catch (e: Exception) {
                     logger<TS>().warn("getQuickInfoAt failed", e)
