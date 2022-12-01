@@ -27,7 +27,7 @@ typealias Matcher = Pair<Regex, MatcherFunc>
 const val relativeRule = "(\\^|_|v|V|⌄)?(\\d*)(<|>)?(\\d*)?"
 
 fun defineRelativeMatcherRegExp(prefix: String) =
-    "(?<!${prefix}\\s{0,10000})${prefix}\\s*(${relativeRule})\\?\\n".toRegex()
+    "(?<!${prefix}\\s{0,10000})${prefix}\\s*(${relativeRule})\\?".toRegex()
 
 fun resolveRelativeMatchResult(matchResult: MatchResult.Destructured): Pair<Int, Int> {
     val (all, offset, lineOffset, direction, charOffset) = matchResult
@@ -91,8 +91,8 @@ const val positionRule = "(\\d+[,|:]\\d+|\\[\\d+[,|:]\\s*\\d+\\])"
  */
 const val absoluteRule = "(${fileRule}:)?${positionRule}"
 
-fun defineAbsoluteMatcherRegExp(prefix: String, rule: String) =
-    "(?<!${prefix}\\s{0,10000})${prefix}\\s*&(${rule})\\?\n".toRegex()
+fun defineAbsoluteMatcherRegExp(prefix: String) =
+    "(?<!${prefix}\\s{0,10000})${prefix}\\s*&(${absoluteRule})\\?".toRegex()
 
 fun resolveAbsoluteMatchResult(matchResult: MatchResult.Destructured): Pair<String, Position> {
     val (all, file, position) = matchResult
@@ -101,7 +101,7 @@ fun resolveAbsoluteMatchResult(matchResult: MatchResult.Destructured): Pair<Stri
 }
 
 fun defineAbsoluteMatcher(prefix: String): Matcher {
-    val regExp = defineAbsoluteMatcherRegExp(prefix, absoluteRule)
+    val regExp = defineAbsoluteMatcherRegExp(prefix)
     return regExp to fun (endPos: Position, matchResult: MatchResult.Destructured): MatcherResult {
         val (file, position) = resolveAbsoluteMatchResult(matchResult)
         return endPos to position to file
@@ -125,7 +125,6 @@ open class CommentCollector(
 ) : FactoryInlayHintsCollector(editor) {
     private fun insertHint(
         sink: InlayHintsSink,
-        type: String,
         offset: Int,
         text: String,
         factory: PresentationFactory
@@ -145,28 +144,28 @@ open class CommentCollector(
 
     override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
         val text = element.text
-        for (matcher in matchers) {
-            if (matcher == null) continue
+        var lineOffset = 1
+        val lines = text.split("\n")
+        fun resolveLine(line: String, matcher: Matcher) {
             val (regExp, matchFunc) = matcher
+            val match = regExp.find(line) ?: return
 
-            for (match in regExp.findAll(text)) {
-                val endOffset = element.startOffset + match.range.last
-                val endPosition = editor.offsetToLogicalPosition(endOffset)
-                val (positions, file) = matchFunc(
-                    endPosition.line to endPosition.column,
-                    match.destructured
-                )
-                val queryPos= positions.second
-                whatHints(queryPos.first, queryPos.second, file)?.let {
-                    insertHint(
-                        sink,
-                        "inlay",
-                        endOffset,
-                        it,
-                        factory
-                    )
-                }
+            val endOffset = element.startOffset + lineOffset + match.range.last
+            val endPosition = editor.offsetToLogicalPosition(endOffset)
+            val (positions, file) = matchFunc(
+                endPosition.line to endPosition.column,
+                match.destructured
+            )
+            val queryPos= positions.second
+            whatHints(queryPos.first, queryPos.second, file)?.let {
+                insertHint(sink, endOffset, it, factory)
             }
+        }
+        lines.forEach { line ->
+            matchers.forEach { matcher ->
+                matcher?.let { resolveLine(line, it) }
+            }
+            lineOffset += line.length + 1
         }
         return false
     }
