@@ -110,6 +110,7 @@ fun defineAbsoluteMatcher(prefix: String): Matcher {
 
 val matchers = mapOf(
     "twoSlashRelative" to defineRelativeMatcher("//"),
+    "twoSlashAbsolute" to defineAbsoluteMatcher("//"),
 )
 
 typealias WhatHints = (line: Int, char: Int, file: String?) -> String?

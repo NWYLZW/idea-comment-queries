@@ -45,20 +45,27 @@ class TS: InlayHintsProvider<TS.Setting> {
                 return false
             }
         }
+        fun getPsiFile(filePath: String): PsiFile {
+//            val vFile = VirtualFileManager.getInstance().findFileByUrl("file://$filePath")
+//            return PsiDocumentManager.getInstance(file.project).getPsiFile(vFile)
+            return file
+        }
         return object : CommentCollector(
             editor, arrayOf(
-                matchers["twoSlashRelative"]
+                matchers["twoSlashRelative"],
+                matchers["twoSlashAbsolute"],
             ),
             fun (line: Int, char: Int, filePath: String?): String? {
+                val nFile = filePath?.let { getPsiFile(it) } ?: file
                 val lineStartOffset = editor.document.getLineStartOffset(line) - 2
                 val offset = lineStartOffset + char
-                val ele = file.findElementAt(offset) ?: return null
+                val ele = nFile.findElementAt(offset) ?: return null
 
-                val tss = TypeScriptService.getForFile(file.project, file.virtualFile) ?: return null
+                val tss = TypeScriptService.getForFile(nFile.project, nFile.virtualFile) ?: return null
                 val quickInfo = tss.getQuickInfoAt(
                     ele,
                     ele.originalElement,
-                    file.originalFile.virtualFile
+                    nFile.originalFile.virtualFile
                 )
                 return try {
                     // sleep 0.3 second to wait for tss.getQuickInfoAt
