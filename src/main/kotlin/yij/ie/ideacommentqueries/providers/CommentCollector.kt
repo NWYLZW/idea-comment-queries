@@ -26,7 +26,7 @@ typealias Matcher = Pair<Regex, MatcherFunc>
  */
 const val relativeRule = "(\\^|_|v|V|⌄)?(\\d*)(<|>)?(\\d*)?"
 
-val defineRelativeMatcherRegExp = fun (prefix: String) =
+fun defineRelativeMatcherRegExp(prefix: String) =
     "(?<!${prefix}\\s{0,10000})${prefix}\\s*(${relativeRule})\\?\\n".toRegex()
 
 fun resolveRelativeMatchResult(matchResult: MatchResult.Destructured): Pair<Int, Int> {
@@ -60,6 +60,51 @@ fun defineRelativeMatcher(prefix: String): Matcher {
             ),
             null
         )
+    }
+}
+
+/**
+ * file rule
+ * like:
+ * * [x] ./a
+ * * [x] ./a/b
+ * * [x] ./a/b/c d/e
+ * * [x] ./a.b.c-d_e
+ * * [x] /codes/a/b/c d/e
+ * * [x] D:/codes/a/b/c d/e
+ */
+const val fileRule = "(?:[a-z|A-Z]\\:)?\\.?/(?:[\\w|_\\-\\. ]+/)*[\\w|_\\-\\. ]+(?:\\.\\w+)*"
+/**
+ * position rule
+ * like:
+ * * [x] 1,2
+ * * [x] [1,2]
+ * * [x] [1, 2]
+ * * [x] 1:2
+ */
+const val positionRule = "(\\d+[,|:]\\d+|\\[\\d+[,|:]\\s*\\d+\\])"
+/**
+ * absolute rule
+ * like:
+ * * [x] positionRule
+ * * [x] fileRule:potionRule
+ */
+const val absoluteRule = "(${fileRule}:)?${positionRule}"
+
+fun defineAbsoluteMatcherRegExp(prefix: String, rule: String) =
+    "(?<!${prefix}\\s{0,10000})${prefix}\\s*&(${rule})\\?\n".toRegex()
+
+fun resolveAbsoluteMatchResult(matchResult: MatchResult.Destructured): Pair<String, Position> {
+    val (all, file, position) = matchResult
+    val (line, char) = position.split(Regex("[,|:]")).map { it.toInt() }
+    return file to Pair(line, char)
+}
+
+fun defineAbsoluteMatcher(prefix: String): Matcher {
+    val regExp = defineAbsoluteMatcherRegExp(prefix, absoluteRule)
+    return regExp to fun (endPos: Position, matchResult: MatchResult.Destructured): MatcherResult {
+        val (file, position) = resolveAbsoluteMatchResult(matchResult)
+        return endPos to position to file
     }
 }
 
