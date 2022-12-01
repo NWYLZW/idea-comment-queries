@@ -97,7 +97,7 @@ fun defineAbsoluteMatcherRegExp(prefix: String) =
 fun resolveAbsoluteMatchResult(matchResult: MatchResult.Destructured): Pair<String, Position> {
     val (all, file, position) = matchResult
     val (line, char) = position.split(Regex("[,|:]")).map { it.toInt() }
-    return file to Pair(line, char)
+    return file to Pair(line - 1, char + 1)
 }
 
 fun defineAbsoluteMatcher(prefix: String): Matcher {
