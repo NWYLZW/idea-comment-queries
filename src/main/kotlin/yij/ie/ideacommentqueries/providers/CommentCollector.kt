@@ -24,7 +24,7 @@ typealias Matcher = Pair<Regex, MatcherFunc>
  * * ^3<
  * * ^3<2
  */
-const val relativeRule = "(\\^|_)?(\\d*)(<|>)?(\\d*)?"
+const val relativeRule = "(\\^|_|v|V|⌄)?(\\d*)(<|>)?(\\d*)?"
 
 val defineRelativeMatcherRegExp = fun (prefix: String) =
     "(?<!${prefix}\\s{0,10000})${prefix}\\s*(${relativeRule})\\?\\n".toRegex()
