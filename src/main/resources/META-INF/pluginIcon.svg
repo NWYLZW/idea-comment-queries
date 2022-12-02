@@ -110,7 +110,7 @@
           filter="url(#rectShadow)"
     />
     <g fill="#000000"
-       fill-opacity=".6"
+       fill-opacity=".4"
        filter="url(#rectShadow)"
     >
         <svg width="140" height="140"
