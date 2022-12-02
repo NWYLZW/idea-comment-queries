@@ -9,7 +9,7 @@ java {
 }
 
 group = "yij.ie"
-version = "2.0.3"
+version = "2.0.4"
 
 repositories {
     mavenCentral()
