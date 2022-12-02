@@ -1,12 +1,72 @@
-<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M32.0845 7.94025V4H24.0203V7.9896H16.029V4H7.91553V7.94025H4V36H16.0044V32.0045C16.0058 30.9457 16.4274 29.9308 17.1766 29.1826C17.9258 28.4345 18.9412 28.0143 20 28.0143C21.0588 28.0143 22.0743 28.4345 22.8234 29.1826C23.5726 29.9308 23.9942 30.9457 23.9956 32.0045V36H36V7.94025H32.0845Z"
-          fill="url(#paint0_linear)"/>
+<svg
+    width="512" height="512"
+    viewBox="0 0 512 512"
+    xmlns="http://www.w3.org/2000/svg"
+>
     <defs>
-        <linearGradient id="paint0_linear" x1="2.94192" y1="4.89955" x2="37.7772" y2="39.7345"
-                        gradientUnits="userSpaceOnUse">
-            <stop offset="0.15937" stop-color="#3BEA62"/>
-            <stop offset="0.5404" stop-color="#3C99CC"/>
-            <stop offset="0.93739" stop-color="#6B57FF"/>
+        <filter
+            id="Filter"
+            x="-100%" y="-100%"
+            width="400%" height="400%"
+        >
+            <feOffset
+                    in="SourceAlpha"
+                    result="offOut"
+                    dx="20" dy="20"
+            />
+            <feGaussianBlur
+                    in="offOut"
+                    result="offBlurOut"
+                    stdDeviation="20"
+            />
+            <feFlood
+                    in="SourceAlpha"
+                    result="color"
+                    flood-color="black"
+                    flood-opacity=".5"
+            />
+            <feComposite
+                    operator="in"
+                    in="color"
+                    in2="offBlurOut"
+                    result="shadow"
+            />
+            <feBlend in="SourceGraphic" in2="shadow" />
+        </filter>
+        <linearGradient
+            id="Gradient"
+            gradientTransform="rotate(40)"
+        >
+            <stop offset="0" stop-color="#48c6ef"/>
+            <stop offset="1" stop-color="#4f86d6"/>
         </linearGradient>
     </defs>
+    <rect
+        id="rect1"
+        x="50" y="50"
+        rx="32" ry="32"
+        width="412" height="412"
+        fill="url(#Gradient)"
+        filter="url(#Filter)"
+    />
+    <svg
+        width="180" height="180"
+        viewBox="0 0 512 512"
+        x="80" y="80"
+        fill="#ffffff"
+        filter="url(#Filter)"
+    >
+        <path
+            d="M201.4 137.4c12.5-12.5 32.8-12.5 45.3 0l160 160c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L224 205.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l160-160z"/>
+    </svg>
+    <svg
+        width="256" height="256"
+        viewBox="0 0 512 512"
+        x="250" y="128"
+        fill="#ffffff"
+        filter="url(#Filter)"
+    >
+        <path
+            d="M96 96c-17.7 0-32 14.3-32 32s-14.3 32-32 32s-32-14.3-32-32C0 75 43 32 96 32h97c70.1 0 127 56.9 127 127c0 52.4-32.2 99.4-81 118.4l-63 24.5 0 18.1c0 17.7-14.3 32-32 32s-32-14.3-32-32V301.9c0-26.4 16.2-50.1 40.8-59.6l63-24.5C240 208.3 256 185 256 159c0-34.8-28.2-63-63-63H96zm48 384c-22.1 0-40-17.9-40-40s17.9-40 40-40s40 17.9 40 40s-17.9 40-40 40z"/>
+    </svg>
 </svg>
