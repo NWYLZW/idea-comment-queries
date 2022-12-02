@@ -5,9 +5,9 @@
 >
     <defs>
         <filter
-            id="Filter"
-            x="-100%" y="-100%"
-            width="400%" height="400%"
+                id="rectShadow"
+                x="-100%" y="-100%"
+                width="400%" height="400%"
         >
             <feOffset
                     in="SourceAlpha"
@@ -46,23 +46,22 @@
         >
             <stop offset="0.2"
                   stop-color="#3f86f6"
-                  stop-opacity="0.5"
+                  stop-opacity="0.3"
             />
             <stop offset="0.8"
                   stop-color="#38c6ff"
-                  stop-opacity="0.3"
+                  stop-opacity="0.4"
             />
         </linearGradient>
     </defs>
-    <rect
-        id="rect1"
-        x="50" y="50"
-        rx="32" ry="32"
-        width="412" height="412"
-        fill="url(#rectGradient)"
-        filter="url(#Filter)"
+    <rect id="rect"
+          x="50" y="50"
+          rx="32" ry="32"
+          width="412" height="412"
+          fill="url(#rectGradient)"
+          filter="url(#rectShadow)"
     />
-    <g fill="#ffffff">
+    <g fill="#ffffff" filter="url(#rectShadow)">
         <svg width="180" height="180"
              viewBox="0 0 512 512"
              x="80" y="80"
@@ -76,9 +75,7 @@
             <path d="M96 96c-17.7 0-32 14.3-32 32s-14.3 32-32 32s-32-14.3-32-32C0 75 43 32 96 32h97c70.1 0 127 56.9 127 127c0 52.4-32.2 99.4-81 118.4l-63 24.5 0 18.1c0 17.7-14.3 32-32 32s-32-14.3-32-32V301.9c0-26.4 16.2-50.1 40.8-59.6l63-24.5C240 208.3 256 185 256 159c0-34.8-28.2-63-63-63H96zm48 384c-22.1 0-40-17.9-40-40s17.9-40 40-40s40 17.9 40 40s-17.9 40-40 40z"/>
         </svg>
     </g>
-    <g fill="url(#fontGradient)"
-       filter="url(#Filter)"
-    >
+    <g fill="url(#fontGradient)">
         <svg width="180" height="180"
              viewBox="0 0 512 512"
              x="80" y="80"
