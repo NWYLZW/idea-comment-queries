@@ -1,6 +1,7 @@
 package yij.ie.ideacommentqueries.providers
 
 import com.intellij.codeInsight.hints.*
+import com.intellij.lang.Language
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Editor
@@ -19,6 +20,11 @@ class TS: InlayHintsProvider<TS.Setting> {
         get() = """
             No Content
         """.trimIndent()
+    override fun isLanguageSupported(language: Language): Boolean {
+        return language.id == "TypeScript"
+    }
+    override val isVisibleInSettings: Boolean
+        get() = true
 
     data class Setting(internal val enable: Boolean)
 
