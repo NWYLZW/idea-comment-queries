@@ -21,7 +21,7 @@ class TS: InlayHintsProvider<TS.Setting> {
             No Content
         """.trimIndent()
     override fun isLanguageSupported(language: Language): Boolean {
-        return language.id == "TypeScript"
+        return language.id == "TypeScript" || language.id == "TypeScript JSX"
     }
     override val isVisibleInSettings: Boolean
         get() = true
