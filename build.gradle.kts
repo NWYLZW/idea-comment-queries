@@ -9,7 +9,7 @@ java {
 }
 
 group = "yij.ie"
-version = "2.0.5"
+version = "2.0.9"
 
 repositories {
     mavenCentral()
@@ -22,7 +22,7 @@ dependencies {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2022.1.4")
+    version.set("2023.2")
     // https://jetbrains.org/intellij/sdk/docs/products/webstorm.html
     type.set("IU")
 
@@ -48,7 +48,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("221")
-        untilBuild.set("223.*")
+        untilBuild.set("232.*")
     }
 
     signPlugin {
