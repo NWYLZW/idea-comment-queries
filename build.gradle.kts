@@ -1,54 +1,55 @@
+fun properties(key: String) = providers.gradleProperty(key)
+fun environment(key: String) = providers.environmentVariable(key)
+
 plugins {
-    id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.7.22"
-    id("org.jetbrains.intellij") version "1.10.0"
+    id("java") // Java support
+    alias(libs.plugins.kotlin) // Kotlin support
+    alias(libs.plugins.gradleIntelliJPlugin) // Gradle IntelliJ Plugin
+    alias(libs.plugins.kover) // Gradle Kover Plugin
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-}
-
-group = "yij.ie"
-version = "2.0.9"
+group = properties("pluginGroup").get()
+version = properties("pluginVersion").get()
 
 repositories {
     mavenCentral()
 }
+
+
 dependencies {
     implementation(kotlin("test"))
-    implementation(kotlin("test-junit"))
 }
 
-// Configure Gradle IntelliJ Plugin
-// Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
-intellij {
-    version.set("2023.2")
-    // https://jetbrains.org/intellij/sdk/docs/products/webstorm.html
-    type.set("IU")
+// Set the JVM language level used to build the project. Use Java 11 for 2020.3+, and Java 17 for 2022.2+.
+kotlin {
+    jvmToolchain(17)
+}
 
-    plugins.set(listOf(
-        "JavaScript",
-    ))
+
+// Configure Gradle IntelliJ Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
+intellij {
+    pluginName = properties("pluginName")
+    version = properties("platformVersion") //version.set("2023.2")
+    type = properties("platformType")
+
+    // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
+    plugins = properties("platformPlugins").map { it.split(',').map(String::trim).filter(String::isNotEmpty) } // plugins.set(listOf(    "JavaScript",    ))
 }
 
 tasks {
+    wrapper {
+        gradleVersion = properties("gradleVersion").get()
+    }
     test {
         useJUnitPlatform()
     }
     buildSearchableOptions {
         enabled = false
     }
-    // Set the JVM compatibility versions
-    withType<JavaCompile> {
-        targetCompatibility = "11"
-    }
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "11"
-    }
 
     patchPluginXml {
-        sinceBuild.set("221")
-        untilBuild.set("232.*")
+        sinceBuild = properties("pluginSinceBuild")
+        untilBuild = properties("pluginUntilBuild")
     }
 
     signPlugin {

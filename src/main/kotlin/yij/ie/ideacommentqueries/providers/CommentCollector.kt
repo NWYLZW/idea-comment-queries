@@ -27,7 +27,7 @@ typealias Matcher = Pair<Regex, MatcherFunc>
 const val relativeRule = "(\\^|_|v|V|⌄)?(\\d*)(<|>)?(\\d*)?"
 
 fun defineRelativeMatcherRegExp(prefix: String) =
-    "(?<!${prefix}\\s{0,10000})${prefix}\\s*(${relativeRule})\\?".toRegex()
+    "(?<!${prefix}\\s{0,10000})${prefix}\\s*($relativeRule)\\?".toRegex()
 
 fun resolveRelativeMatchResult(matchResult: MatchResult.Destructured): Pair<Int, Int> {
     val (all, offset, lineOffset, direction, charOffset) = matchResult
@@ -89,10 +89,10 @@ const val positionRule = "(\\d+[,|:]\\d+|\\[\\d+[,|:]\\s*\\d+\\])"
  * * [x] positionRule
  * * [x] fileRule:potionRule
  */
-const val absoluteRule = "(${fileRule}:)?${positionRule}"
+const val absoluteRule = "($fileRule:)?$positionRule"
 
 fun defineAbsoluteMatcherRegExp(prefix: String) =
-    "(?<!${prefix}\\s{0,10000})${prefix}\\s*&(${absoluteRule})\\?".toRegex()
+    "(?<!${prefix}\\s{0,10000})${prefix}\\s*&($absoluteRule)\\?".toRegex()
 
 fun resolveAbsoluteMatchResult(matchResult: MatchResult.Destructured): Pair<String, Position> {
     val (all, file, position) = matchResult
