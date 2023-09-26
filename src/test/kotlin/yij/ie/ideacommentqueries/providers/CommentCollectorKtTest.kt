@@ -2,7 +2,7 @@ package yij.ie.ideacommentqueries.providers
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-internal class CommentCollectorKtTest  : BasePlatformTestCase() {
+internal class CommentCollectorKtTest : BasePlatformTestCase() {
 
     fun testDefineRelativeMatcherRegExp() {
         val code = """
