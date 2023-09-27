@@ -13,7 +13,7 @@ import javax.swing.JComponent
 @Suppress("UnstableApiUsage")
 class TS: InlayHintsProvider<TS.Setting> {
     override val key: SettingsKey<Setting>
-        get() = SettingsKey("yij.ie.ideacommentqueries.ts")
+        get() = SettingsKey("yij.ie.ideacommentqueries.providers.TS")
     override val name: String
         get() = "TS"
     override val previewText: String

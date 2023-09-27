@@ -27,6 +27,20 @@ type T2 = T['e']['f'] //<6?
 //                ^3?
 ```
 
+## Command Options
+
+### Below (supports optional line count)
+ - `_?`
+ - `⌄?`
+ - `v?`
+ - `V?`
+
+### Above  (supports optional line count)
+- `^?`
+
+### Inline 
+ - `<#?` - where `#` is the number of characters offset
+
 ## Related
 
 Use in [VSCode](https://github.com/nwylzw/vscode-comment-queries#vscode-comment-queries-readme).

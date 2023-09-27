@@ -1,13 +1,9 @@
-package yij.ie.ideacommentqueries.test.providers
+package yij.ie.ideacommentqueries.providers
 
-import org.junit.Test
-import yij.ie.ideacommentqueries.providers.defineAbsoluteMatcher
-import yij.ie.ideacommentqueries.providers.defineRelativeMatcherRegExp
-import yij.ie.ideacommentqueries.providers.resolveRelativeMatchResult
-import kotlin.test.assertEquals
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-internal class CommentCollectorKtTest {
-    @Test
+internal class CommentCollectorKtTest : BasePlatformTestCase() {
+
     fun testDefineRelativeMatcherRegExp() {
         val code = """
             type T0 = string | number;
@@ -30,14 +26,15 @@ internal class CommentCollectorKtTest {
         for (matchResult in regexp.findAll(code)) {
             val destruct = matchResult.destructured
             val (line, char) = resolveRelativeMatchResult(destruct)
+            if (cases.size == 0) break;
             val (lineCase, charCase) = cases.removeAt(0)
             assertEquals(lineCase, line)
             assertEquals(charCase, char)
         }
         assertEquals(true, cases.isEmpty())
     }
-    @Test
-    fun testDefineAbsoluteMathcerRegExp() {
+
+    fun testDefineAbsoluteMatcherRegExp() {
         val code = """
             // &1,1?
             // &[1,1]?

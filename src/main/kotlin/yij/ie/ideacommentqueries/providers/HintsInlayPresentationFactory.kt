@@ -3,7 +3,6 @@ package yij.ie.ideacommentqueries.providers
 import com.intellij.codeInsight.hints.InlayPresentationFactory
 import com.intellij.codeInsight.hints.presentation.PresentationFactory
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
-import java.awt.Color
 
 @Suppress("UnstableApiUsage")
 open class HintsInlayUtil {
