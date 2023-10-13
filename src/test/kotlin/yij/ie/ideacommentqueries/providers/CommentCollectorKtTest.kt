@@ -1,8 +1,10 @@
 package yij.ie.ideacommentqueries.providers
 
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
-internal class CommentCollectorKtTest : BasePlatformTestCase() {
+internal class CommentCollectorKtTest {
+    @Test
 
     fun testDefineRelativeMatcherRegExp() {
         val code = """
@@ -33,7 +35,7 @@ internal class CommentCollectorKtTest : BasePlatformTestCase() {
         }
         assertEquals(true, cases.isEmpty())
     }
-
+    @Test
     fun testDefineAbsoluteMatcherRegExp() {
         val code = """
             // &1,1?
