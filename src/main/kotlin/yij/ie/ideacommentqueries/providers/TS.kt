@@ -15,7 +15,7 @@ class TS: InlayHintsProvider<TS.Setting> {
     override val key: SettingsKey<Setting>
         get() = SettingsKey("yij.ie.ideacommentqueries.providers.TS")
     override val name: String
-        get() = "TS"
+        get() = "TypeScript comment queries inlay hints"
     override val previewText: String
         get() = """
             No Content
