@@ -156,6 +156,8 @@ open class CommentCollector(
     }
 
     override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
+        if (matchers.isEmpty()) return false
+
         val fileHintPositions = mutableMapOf<
             String, MutableList<Pair<Position, Int>>
         >()
