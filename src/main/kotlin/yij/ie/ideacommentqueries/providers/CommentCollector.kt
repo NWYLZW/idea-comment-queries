@@ -180,7 +180,7 @@ open class CommentCollector(
             }.add(queryPos to endOffset)
         }
         lines.forEach { line ->
-            matchers.forEach { matcher ->
+            if (line.trim() != "") matchers.forEach { matcher ->
                 matcher?.let { resolveLine(line, it) }
             }
             lineOffset += line.length + 1
