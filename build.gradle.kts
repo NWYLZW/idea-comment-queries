@@ -48,6 +48,10 @@ tasks {
     buildSearchableOptions {
         enabled = false
     }
+    runIde {
+        // https://plugins.jetbrains.com/docs/intellij/ide-development-instance.html#enabling-auto-reload
+        autoReloadPlugins = true
+    }
 
     patchPluginXml {
         sinceBuild = properties("pluginSinceBuild")
