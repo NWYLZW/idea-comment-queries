@@ -87,7 +87,7 @@ class TS: InlayHintsProvider<Settings> {
                     nFile.originalFile.virtualFile
                 )
                 return try {
-                    quickInfo?.get(1, TimeUnit.SECONDS)?.displayString
+                    quickInfo?.get(100, TimeUnit.MILLISECONDS)?.displayString
                 } catch (e: Exception) {
                     logger<TS>().warn("getQuickInfoAt failed", e)
                     null
