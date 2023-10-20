@@ -40,8 +40,16 @@ type T1 = T0;
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <codeInsight.inlayProvider language="TypeScript"
-                                   implementationClass="yij.ie.ideacommentqueries.providers.TS"
-                                   id="TypeScriptCommentQueriesInlayProvider"/>
+        <codeInsight.inlayProvider
+            language="TypeScript"
+            implementationClass="yij.ie.ideacommentqueries.providers.TS"
+            id="TypeScriptCommentQueriesInlayProvider"
+        />
+        <projectConfigurable
+            displayName="Comment Queries"
+            parentId="tools"
+            id="yij.ie.ideacommentqueries.Config"
+            instance="yij.ie.ideacommentqueries.Config"
+        />
     </extensions>
 </idea-plugin>
