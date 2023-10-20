@@ -50,6 +50,7 @@ type T1 = T0;
             parentId="tools"
             id="yij.ie.ideacommentqueries.Config"
             instance="yij.ie.ideacommentqueries.Config"
+            nonDefaultProject="true"
         />
     </extensions>
 </idea-plugin>
