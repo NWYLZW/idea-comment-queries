@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import yij.ie.ideacommentqueries.ConfigService
 import java.util.concurrent.TimeUnit
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -55,6 +56,13 @@ class TS: InlayHintsProvider<Settings> {
         settings: Settings,
         sink: InlayHintsSink
     ): InlayHintsCollector {
+        val service = ConfigService.getInstance(editor.project!!)
+        if (service.disable) return object : InlayHintsCollector {
+            override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
+                return false
+            }
+        }
+
         if (!settings.relative) return object : InlayHintsCollector {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
                 return false
