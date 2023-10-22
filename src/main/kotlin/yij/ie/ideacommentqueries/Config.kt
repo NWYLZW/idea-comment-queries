@@ -11,7 +11,7 @@ open class Config(private val project: Project) : Configurable {
 
     private val service = ConfigService.getInstance(project)
 
-    private val disableCheckBox = JCheckBox("Disable for this project")
+    private val disableCheckBox = JCheckBox("Disable for this project", service.disable)
     private val panel = FormBuilder
         .createFormBuilder()
         .addComponent(disableCheckBox, 1)
