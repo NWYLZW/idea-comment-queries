@@ -57,7 +57,11 @@ class TS: InlayHintsProvider<Settings> {
         sink: InlayHintsSink
     ): InlayHintsCollector {
         val service = ConfigService.getInstance(editor.project!!)
-        if (service.disable) return object : InlayHintsCollector {
+        var disable = service.disable
+        // TODO resolve different language
+        if (file.text.startsWith("/* comment-queries-enable */")) disable = false
+
+        if (disable) return object : InlayHintsCollector {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
                 return false
             }

@@ -178,6 +178,9 @@ open class CommentCollector(
             String, MutableList<Pair<Position, Int>>
         >()
         val text = element.text
+        // TODO resolve different language
+        val disable = text.startsWith("/* comment-queries-disable */")
+        if (disable) return false
         var lineOffset = 1
         val lines = text.split("\n")
         fun resolveLine(line: String, matcher: Matcher) {
