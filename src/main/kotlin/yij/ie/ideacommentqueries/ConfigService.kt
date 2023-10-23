@@ -10,8 +10,8 @@ import com.intellij.util.xmlb.XmlSerializerUtil
 @Service(Service.Level.PROJECT)
 @State(name = "CommentQueriesConfigService", storages = [Storage("comment-queries.xml")])
 class ConfigService : PersistentStateComponent<ConfigService> {
-    var disable: Boolean = false
-    var overflowLength: Int = 120
+    var disable = false
+    var overflowLength = 120
     override fun getState(): ConfigService {
         return this
     }
