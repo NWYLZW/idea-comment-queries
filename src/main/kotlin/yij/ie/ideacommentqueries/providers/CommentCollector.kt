@@ -6,6 +6,7 @@ import com.intellij.codeInsight.hints.presentation.PresentationFactory
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.startOffset
+import yij.ie.ideacommentqueries.ConfigService
 
 typealias Position = Pair<Int, Int>
 
@@ -123,11 +124,16 @@ open class CommentCollector(
         return "line: $line, char: $char, file: $file"
     }
 ) : FactoryInlayHintsCollector(editor) {
+    val service = ConfigService.getInstance(editor.project!!)
+    interface InsertHintOptions {
+        val overflowLength: Int
+    }
     private fun insertHint(
         sink: InlayHintsSink,
         offset: Int,
         text: String,
-        factory: PresentationFactory
+        factory: PresentationFactory,
+        options: InsertHintOptions
     ) {
         sink.addInlineElement(
             offset,
@@ -137,6 +143,13 @@ open class CommentCollector(
                 text
                     .replace("\n *".toRegex(), "␊")
                     .replace("[\u0000-\u001F\u007F-\u009F]".toRegex(), "")
+                    .let {
+                        if (options.overflowLength > 0 && it.length > options.overflowLength) {
+                            it.substring(0, options.overflowLength) + "..."
+                        } else {
+                            it
+                        }
+                    }
             ),
             false
         )
@@ -148,9 +161,12 @@ open class CommentCollector(
     ) {
         fileHintPositions.forEach { (file, positions) ->
             positions.forEach { (position, endOffset) ->
-                whatHints(position.first, position.second, file)?.let {
-                    insertHint(sink, endOffset, it, factory)
-                }
+                whatHints(position.first, position.second, file)
+                    ?.let {
+                        insertHint(sink, endOffset, it, factory, object : InsertHintOptions {
+                            override val overflowLength = service.overflowLength
+                        })
+                    }
             }
         }
     }
