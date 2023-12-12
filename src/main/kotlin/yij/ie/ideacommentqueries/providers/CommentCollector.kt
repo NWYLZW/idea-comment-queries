@@ -118,6 +118,7 @@ typealias WhatHints = (line: Int, char: Int, file: String?) -> String?
 
 @Suppress("UnstableApiUsage")
 open class CommentCollector(
+    private val text: String,
     private val editor: Editor,
     private val matchers: Array<Matcher?>,
     private val whatHints: WhatHints = fun (line: Int, char: Int, file: String?): String {
@@ -171,13 +172,17 @@ open class CommentCollector(
         }
     }
 
+    private var onlyOnce = true
     override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
+        if (!onlyOnce) return false
+        onlyOnce = false
+
         if (matchers.isEmpty()) return false
 
         val fileHintPositions = mutableMapOf<
             String, MutableList<Pair<Position, Int>>
         >()
-        val text = element.text
+        // val text = element.text
         // TODO resolve different language
         val disable = text.startsWith("/* comment-queries-disable */")
         if (disable) return false

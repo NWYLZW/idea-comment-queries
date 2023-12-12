@@ -56,22 +56,23 @@ class TS: InlayHintsProvider<Settings> {
         settings: Settings,
         sink: InlayHintsSink
     ): InlayHintsCollector {
+        val text = file.text
         val service = ConfigService.getInstance(editor.project!!)
-        var disable = service.disable
+        var disable = (
+            service.disable
+        ) || (
+            text.startsWith("/* comment-queries-disable */")
+        )
         // TODO resolve different language
         if (file.text.startsWith("/* comment-queries-enable */")) disable = false
 
-        if (disable) return object : InlayHintsCollector {
+        val NO_COLLECTOR = object : InlayHintsCollector {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
                 return false
             }
         }
+        if (disable || !settings.relative) return NO_COLLECTOR
 
-        if (!settings.relative) return object : InlayHintsCollector {
-            override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
-                return false
-            }
-        }
         fun getPsiFile(filePath: String): PsiFile {
 //            val vFile = VirtualFileManager.getInstance().findFileByUrl("file://$filePath")
 //            return PsiDocumentManager.getInstance(file.project).getPsiFile(vFile)
@@ -85,6 +86,7 @@ class TS: InlayHintsProvider<Settings> {
             innerMatchers.add(matchers["twoSlashAbsolute"]!!)
         }
         return object : CommentCollector(
+            text,
             editor, innerMatchers.toTypedArray(),
             fun (line: Int, char: Int, filePath: String?): String? {
                 val nFile = filePath?.let { getPsiFile(it) } ?: file
@@ -98,12 +100,17 @@ class TS: InlayHintsProvider<Settings> {
                     ele.originalElement,
                     nFile.originalFile.virtualFile
                 )
-                return try {
-                    quickInfo?.get(100, TimeUnit.MILLISECONDS)?.displayString
-                } catch (e: Exception) {
-                    logger<TS>().warn("getQuickInfoAt failed", e)
-                    null
+                val retryTimes = 3
+                for (i in 1..retryTimes) {
+                    try {
+                        val info = quickInfo?.get(100, TimeUnit.MILLISECONDS)
+                        if (info != null)
+                            return info.displayString
+                    } catch (e: Exception) {
+                        logger<TS>().warn("getQuickInfoAt failed", e)
+                    }
                 }
+                return null
             }
         ) {}
     }
