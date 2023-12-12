@@ -3,8 +3,8 @@
 annotations = "24.0.1"
 
 # plugins
-kotlin = "1.9.0"
-gradleIntelliJPlugin = "1.15.0"
+kotlin = "1.9.21"
+gradleIntelliJPlugin = "1.16.1"
 kover = "0.7.3"
 
 [libraries]
