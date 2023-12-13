@@ -5,7 +5,6 @@ import com.intellij.codeInsight.hints.InlayHintsSink
 import com.intellij.codeInsight.hints.presentation.PresentationFactory
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.suggested.startOffset
 import yij.ie.ideacommentqueries.ConfigService
 
 typealias Position = Pair<Int, Int>
@@ -182,6 +181,7 @@ open class CommentCollector(
         val fileHintPositions = mutableMapOf<
             String, MutableList<Pair<Position, Int>>
         >()
+        // TODO only render comment queries in `element.text` range?
         // val text = element.text
         // TODO resolve different language
         val disable = text.startsWith("/* comment-queries-disable */")
@@ -192,7 +192,7 @@ open class CommentCollector(
             val (regExp, matchFunc) = matcher
             val match = regExp.find(line) ?: return
 
-            val endOffset = element.startOffset + lineOffset + match.range.last
+            val endOffset = lineOffset + match.range.last
             val endPosition = editor.offsetToLogicalPosition(endOffset)
             val (positions, file) = matchFunc(
                 endPosition.line to endPosition.column,
