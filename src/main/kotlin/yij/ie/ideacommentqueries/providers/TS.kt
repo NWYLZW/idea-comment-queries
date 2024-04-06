@@ -95,11 +95,7 @@ class TS: InlayHintsProvider<Settings> {
                 val ele = nFile.findElementAt(offset) ?: return null
 
                 val tss = TypeScriptService.getForFile(nFile.project, nFile.virtualFile) ?: return null
-                val quickInfo = tss.getQuickInfoAt(
-                    ele,
-                    ele.originalElement,
-                    nFile.originalFile.virtualFile
-                )
+                val quickInfo = tss.getQuickInfoAt(ele, nFile.virtualFile)
                 val retryTimes = 3
                 for (i in 1..retryTimes) {
                     try {
