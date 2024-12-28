@@ -59,12 +59,12 @@ tasks {
     }
 
     signPlugin {
-        certificateChain = System.getenv("CERTIFICATE_CHAIN")
-        privateKey = System.getenv("PRIVATE_KEY")
-        password = System.getenv("PRIVATE_KEY_PASSWORD")
+        certificateChain = environment("CERTIFICATE_CHAIN")
+        privateKey = environment("PRIVATE_KEY")
+        password = environment("PRIVATE_KEY_PASSWORD")
     }
 
     publishPlugin {
-        token = System.getenv("PUBLISH_TOKEN")
+        token = environment("PUBLISH_TOKEN")
     }
 }
